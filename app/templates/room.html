@@ -45,8 +45,13 @@
 <script type="text/javascript">
 
 	let key = JSON.parse(document.getElementById('key').textContent);
-	const url = `ws://${window.location.host}/ws/room_chat/${key}/`;
-	const socket = new WebSocket(url);
+	var loc = window.location;
+	var wsStart = 'ws://';
+	if (loc.protocol == 'https:') {
+	     wsStart = 'wss://'
+	}
+	var endpoint = wsStart + `${window.location.host}` + '/ws/room_chat/' + key + '/';
+var socket = new WebSocket(endpoint);
 	let user = '';
 	$.ajax({
 		url: '/get_logined_user/',
