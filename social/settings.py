@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-v*f&=9hlf&px1&o&$32w^q@68)3zl2hq(@sts#1s@^&*$#tah(
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['https://own-social-media-demo.herokuapp.com']
+CSRF_TRUSTED_ORIGINS = ['https://django-server-production-21b9.up.railway.app']
 
 # Application definition
 
