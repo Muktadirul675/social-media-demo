@@ -1,0 +1,104 @@
+{% extends './base.html' %}
+
+{% block body %}
+
+<style type="text/css">
+	#send_msg_form{
+		width:  80vw;
+	}
+	.msg_box{
+		height: 40vh;
+		overflow-y: scroll;
+	}
+	.own_text{
+		text-align: right;
+	}
+</style>
+
+<div class="p-3">
+	<div id='welcome_msg'>
+		<h5>Wait for connection...</h5>
+		<h6>If this process takes longer time, refresh the page</h6>
+	</div>
+	<p>Room key: {{room_key}}</p> 
+	<a href="{% url 'social:home' %}" class="text-danger">Exit room</a><hr>
+	<div class="msg_box">
+		
+	</div> <hr>
+	<form id="send_msg_form">
+		<div class="input-group">
+			<input class="form-control" type="text" name="chat">
+			<div class="input-group-append">
+				<input type="submit" value="Send" class="btn btn-primary form-control w-10">
+			</div>
+		</div>
+	</form>
+</div>
+
+
+
+{% endblock %}
+
+
+{% block js %}
+{{ room_key|json_script:"key" }}
+<script type="text/javascript">
+
+	let key = JSON.parse(document.getElementById('key').textContent);
+	const url = `ws://${window.location.host}/ws/room_chat/${key}/`;
+	const socket = new WebSocket(url);
+	let user = '';
+	$.ajax({
+		url: '/get_logined_user/',
+		method:'GET',
+		success: function(response){
+			user  = response.user
+			console.log('Logged in user '+user)
+		}
+	})
+	socket.onmessage = function(e){
+		let data = JSON.parse(e.data)
+		if(data.type === 'welcome_message'){
+			console.log(user)
+			console.log(data.user)
+			if(user === data.user){
+				let content = `
+					<h4>${data.message}</h4>
+					<p>You are now connected and ready to chat! </p>
+				`
+				$('#welcome_msg').replaceWith(content)
+			}
+			
+		}
+		if(data.type === 'chat_message'){
+			let message_div = `
+				<div class="message mb-1">
+					<h6 class="text-primary">${data.sender}</h6>
+					${data.message}
+				</div><hr/>
+			`
+			if(user === data.sender){
+				message_div = `
+					<div class="message own_text mb-1">
+						<h6 class="text-primary">You</h6>
+						${data.message}
+					</div><hr/>
+				`
+			}
+			$('.msg_box').append(message_div)
+			$('.msg_box').scrollTop($('.msg_box').height());
+		}
+	}
+	const form_submit = (e) => {
+		e.preventDefault();
+		let msg = e.target.chat.value
+		socket.send(JSON.stringify({
+			'message' : msg,
+			'sender':user
+		}))
+		$('#send_msg_form').trigger('reset')
+	}
+	$('#send_msg_form').on('submit', form_submit)
+</script>
+{% endblock %}
+
