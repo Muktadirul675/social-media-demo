@@ -1,3 +1,4 @@
+asgi-redis==1.4.3
 asgiref==3.5.2
 async-timeout==4.0.2
 attrs==22.1.0
@@ -17,6 +18,7 @@ hyperlink==21.0.0
 idna==3.4
 incremental==22.10.0
 msgpack==1.0.4
+msgpack-python==0.5.6
 packaging==21.3
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
