@@ -52,9 +52,12 @@ MIDDLEWARE = [
 ]
 
 CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer"
-    }
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [("redis://default:qYmFxOwi2qSBnz6oM9mr@containers-us-west-51.railway.app:5853")],
+        },
+    },
 }
 
 ROOT_URLCONF = 'social.urls'
