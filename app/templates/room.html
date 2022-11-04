@@ -5,10 +5,7 @@
 <style type="text/css">
 	#send_msg_form{
 		width:  80vw;
-	}
-	.msg_box{
-		height: 40vh;
-		overflow-y: scroll;
+		margin: 20px;
 	}
 	.own_text{
 		text-align: right;
@@ -106,7 +103,7 @@ var socket = new WebSocket(endpoint);
 				`
 			}
 			$('.msg_box').append(message_div)
-			$('.msg_box').scrollTop($('.msg_box').height());
+			$(document).scrollTop($(document).height());
 		}
 	}
 	const form_submit = (e) => {
