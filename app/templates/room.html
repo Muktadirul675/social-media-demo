@@ -5,26 +5,24 @@
 <style type="text/css">
 	#send_msg_form{
 		width:  80vw;
-		margin: 20px;
+		margin:  20px;
+	}
+	.message{
+		width:  fit-content;
+		margin-right:  auto;
+		padding: 10px;
+		color:  white;
+		border-radius: 5px 25px 25px 25px;
+		max-width:  30%;
 	}
 	.own_text{
-		text-align: right;
+		width: fit-content;
+		margin-left: auto;
+		padding:  10px;
+		color:  white;
+		border-radius: 25px 5px 25px 25px;
+		max-width: 30%;
 	}
-	.msg_box::-webkit-scrollbar-track {
-		width:0px;
-    background-color: transparent;
-}
-
-.msg_box::-webkit-scrollbar {
-    width: 0px;
-    background-color: transparent;
-}
-
-.msg_box::-webkit-scrollbar-thumb {
-	width:0px;
-    background-color: transparent;
-}
-
 </style>
 
 <div class="p-3">
@@ -35,6 +33,18 @@
 	<p>Room key: {{room_key}}</p> 
 	<a href="{% url 'social:home' %}" class="text-danger">Exit room</a><hr>
 	<div class="msg_box">
+
+		{% for m in room_messages %}
+			{% if m.user.user == user %}
+				<div class="own_text bg-primary mb-1">
+					{{m.message}}
+				</div>
+			{% else %}
+				<div class="message bg-primary mb-1">
+					{{m.message}}
+				</div>
+			{% endif %}
+		{% endfor %}
 		
 	</div> <hr>
 	<form id="send_msg_form">
@@ -89,15 +99,13 @@ var socket = new WebSocket(endpoint);
 		}
 		if(data.type === 'chat_message'){
 			let message_div = `
-				<div class="message mb-1">
-					<h6 class="text-primary">${data.sender}</h6>
+				<div class="message bg-primary mb-1">
 					${data.message}
-				</div><hr/>
+				</div>
 			`
 			if(user === data.sender){
 				message_div = `
-					<div class="message own_text mb-1">
-						<h6 class="text-primary">You</h6>
+					<div class="own_text bg-primary mb-1">
 						${data.message}
 					</div><hr/>
 				`
