@@ -5,7 +5,7 @@ from django.contrib import messages
 from .decorators import unauthenticated, authenticated
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-
+from . import models
 # Create your views here.
 
 import random
@@ -22,7 +22,18 @@ def create_room_key(user1,user2):
 def room(request, user2_id, key):
 	user1 = request.user
 	user2 = User.objects.get(pk=user2_id)
-	cont = {"u1":user1,'u2':user2,'room_key':key}
+	room = None
+	if not models.Room.objects.filter(room_key=key).exists():
+		new_room = models.Room(room_key=key)
+		room = new_room
+		new_room.save()
+		print(f'Room {key} created from view')
+	else:
+		room = models.Room.objects.get(room_key=key)
+		print(f'Room {key} connected from view')
+	messages = list(models.RoomMessage.objects.filter(room=room))
+	print(messages)
+	cont = {"u1":user1,'u2':user2,'room_key':key, 'room_messages':messages}
 
 	return render(request,'room.html',cont)
 
